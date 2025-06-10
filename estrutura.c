@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "estrutura.h"
+
+//FUNÇÕES
+
+//Criar Grafo
+Grafo *criarGrafo(){
+    Grafo *grafo = malloc(sizeof(Grafo));
+    grafo -> tamanho = 0;
+    grafo -> aeroportos = NULL;
+    grafo -> matrizAdjacencia = NULL;
+    return grafo;
+}
+
+//Buscar Aeroporto 
+int buscarAeroporto (Grafo *grafo, const char *codigo){
+    for (int i = 0; i < grafo -> tamanho; i++){
+        if (strcmp(grafo->aeroportos[i].codigo, codigo) == 0){
+            return i;
+        } 
+    }
+
+    return -1;
+}
+
+//Adicionar Aeroporto + Ajustar Matriz de Adjacência
+void adicionarAeroporto (Grafo *grafo, const char *codigo, const char *nome){
+    //realocar espaço
+    grafo -> novoAeroportos = realloc(grafo -> aeroportos, (grafo -> tamanho + 1) * sizeof(Aeroporto));
+
+    if (novoAeroportos == NULL) {
+        printf("Erro ao alocar memória para aeroportos.\n");
+        return;
+    }
+    grafo->aeroportos = novoAeroportos;
+
+    strcpy(grafo->aeroportos[grafo->tamanho].codigo, codigo);
+    strcpy(grafo->aeroportos[grafo->tamanho].nome, nome);
+
+    //realocar as linhas
+    grafo -> novaMatrizAdjacencia = realloc(grafo -> matrizAdjacencia, (grafo -> tamanho + 1) * sizeof(int*));
+
+    if (novaMatriz == NULL) {
+        printf("Erro ao alocar memória para matriz de adjacência.\n");
+        return;
+    }
+    grafo->matrizAdjacencia = novaMatriz;
+
+    for (int i = 0; i < grafo->tamanho + 1; i++) {
+            int *novaLinha = realloc(grafo->matrizAdjacencia[i], (grafo->tamanho + 1) * sizeof(int));
+            if (novaLinha == NULL) {
+                printf("Erro ao realocar linha da matriz.\n");
+                return;
+            }
+            grafo->matrizAdjacencia[i] = novaLinha;
+
+            for (int j = 0; j < grafo->tamanho + 1; j++) {
+                if (i == grafo->tamanho || j == grafo->tamanho) {
+                    grafo->matrizAdjacencia[i][j] = 0;
+                }
+            }
+    }
+    grafo->tamanho++;
+}
+
+//Adicionar Voo
+void adicionarVoo(Grafo *grafo, const char * origem, const char * destino, int numero){
+    int i = buscarAeroporto(grafo, origem);
+    int j = buscarAeroporto(grafo, destino);
+    if(i != -1 && j != -1){
+        grafo -> matrizAdjacencia[i][j] = numero;
+    }
+}
+
+//Remover Voo
+void removerVoo(Grafo *grafo, const char * origem, const char * destino){
+    int i = buscarAeroporto(grafo, origem);
+    int j = buscarAeroporto(grafo, destino);
+    if(i != -1 && j != -1){
+        grafo -> matrizAdjacencia[i][j] = 0;
+    }
+}
+
+//Liberar Grafo
+void liberarGrafo(Grafo *grafo) {
+    for (int i = 0; i < grafo -> tamanho; i++) {
+        free(grafo -> matrizAdjacencia[i]);
+    }
+    free(grafo -> matrizAdjacencia);
+    free(grafo -> aeroportos);
+    free(grafo);
+}
+
+//Imprimir Matriz de Adjacência
+void imprimirMatrizAdjacencia(Grafo *grafo) {
+    printf("\nMatriz de Adjacência:\n");
+    for (int i = 0; i < grafo -> tamanho; i++) {
+        for (int j = 0; j < grafo -> tamanho; j++) {
+            printf("%3d ", grafo -> matrizAdjacencia[i][j]);
+        }
+        printf("\n");
+    }
+}
