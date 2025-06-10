@@ -20,9 +20,8 @@ Grafo* criarGrafo();
 void liberarGrafo(Grafo *grafo);
 int buscarAeroporto(Grafo *grafo, const char *codigo);
 void adicionarAeroporto(Grafo *grafo, const char *codigo, const char *nome);
-//void removerAeroporto(Grafo *grafo, int codigo);
-void adicionarVoo(Grafo *grafo, int origem, int destino, int numero);
-void removerVoo(Grafo *grafo, int origem, int destino);
+void adicionarVoo(Grafo *grafo, const char *origem, const char *destino, int numero);
+void removerVoo(Grafo *grafo, const char *origem, const char *destino);
 void imprimirMatrizAdjacencia(Grafo *grafo);
 
 #endif
