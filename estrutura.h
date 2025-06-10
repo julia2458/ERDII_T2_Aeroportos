@@ -3,17 +3,16 @@
 #define ESTRUTURA_H
 
 //Declaração das Estruturas Aeroporto e Grafo
-
 typedef struct {
-    char codigo[3];
+    char codigo[4];
     char nome[100];
-}Aeroporto;
+} Aeroporto;
 
 typedef struct {
     Aeroporto *aeroportos; // Declaração do ponteiro "aeroporto" para elementos da estrutura "Aeroporto"
     int **matrizAdjacencia;
     int tamanho; //Número de aeroportos cadastrados
-}Grafo;
+} Grafo;
 
 //Declaração das Funções Principais
 Grafo* criarGrafo();
