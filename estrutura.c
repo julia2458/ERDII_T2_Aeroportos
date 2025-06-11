@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "estrutura.h"
 
 //FUNÇÕES
@@ -102,20 +103,26 @@ void adicionarVoo(Grafo *grafo, const char *origem, const char *destino, int num
 
 
 //Remover Voo
-void removerVoo(Grafo *grafo, const char * origem, const char * destino){
-    int i = buscarAeroporto(grafo, origem);
-    int j = buscarAeroporto(grafo, destino);
+void removerVoo(Grafo *grafo, int numero){
+    bool encontrado = false;
 
-    
-    if (grafo->matrizAdjacencia[i][j] == 0) {
-        printf("Nenhum voo encontrado de %s para %s.\n", origem, destino);
-        return;
+    for (int i = 0; i < grafo->tamanho; i++) {
+        for (int j = 0; j < grafo->tamanho; j++) {
+            if (grafo->matrizAdjacencia[i][j] == numero) {
+                grafo->matrizAdjacencia[i][j] = 0;
+                printf("Voo %d (%s -> %s) removido com sucesso.\n",
+                       numero, grafo->aeroportos[i].codigo, grafo->aeroportos[j].codigo);
+                encontrado = true;
+                break;
+            }
+        }
+        if (encontrado) break;
     }
 
-    grafo->matrizAdjacencia[i][j] = 0;
-    printf("Voo de %s para %s removido com sucesso.\n", origem, destino);
+    if (!encontrado) {
+        printf("Voo numero %d nao encontrado.\n", numero);
+    }
 }
-
 
 //Liberar Grafo
 void liberarGrafo(Grafo *grafo) {

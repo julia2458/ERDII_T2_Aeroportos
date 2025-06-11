@@ -27,12 +27,15 @@ void listarVoos(Grafo *grafo, const char *codigoOrigem) {
     }
 }
 
+bool encontrouCaminho;
+
 // Função auxiliar (recursiva) para busca em profundidade (DFS)
 void dfs(Grafo *grafo, int atual, int destino, bool *visitado, int *caminho, int nivel) {
     visitado[atual] = true;
     caminho[nivel] = atual;
 
     if (atual == destino) {
+        encontrouCaminho = true;
         printf("Caminho encontrado: ");
         for (int i = 0; i <= nivel; i++) {
             printf("%s", grafo->aeroportos[caminho[i]].codigo);
@@ -64,9 +67,14 @@ void buscarTrajetos(Grafo *grafo, const char *origemCod, const char *destinoCod)
 
     bool *visitado = calloc(grafo->tamanho, sizeof(bool));
     int *caminho = malloc(grafo->tamanho * sizeof(int));
+    encontrouCaminho = false;
 
     printf("Buscando caminhos de %s para %s...\n", origemCod, destinoCod);
     dfs(grafo, origem, destino, visitado, caminho, 0);
+
+    if (!encontrouCaminho) {
+        printf("Nenhum caminho encontrado de %s para %s.\n", origemCod, destinoCod);
+    }
 
     free(visitado);
     free(caminho);
@@ -88,50 +96,72 @@ void menu(Grafo *grafo) {
         printf("6. Mostrar matriz de adjacencia\n");
         printf("0. Sair\n");
         printf("====================\n");
+        char entrada[10];
         printf("Escolha: ");
-        scanf("%d", &opcao);
-        getchar();
+        fgets(entrada, sizeof(entrada), stdin);
+
+        entrada[strcspn(entrada, "\n")] = '\0';
+
+        bool valido = true;
+        for (int i = 0; entrada[i] != '\0'; i++) {
+            if (entrada[i] < '0' || entrada[i] > '9') {
+                valido = false;
+                break;
+            }
+        }
+
+        if (!valido) {
+            printf("Entrada invalida. Digite apenas numeros.\n");
+            continue;
+        }
+
+        opcao = atoi(entrada);
 
         switch (opcao) {
             case 1:
                 printf("Codigo do aeroporto (3 letras): ");
                 scanf("%3s", codOrigem);
-                getchar();
+                getchar();  // limpa \n
                 printf("Nome da cidade: ");
                 fgets(nome, sizeof(nome), stdin);
-                nome[strcspn(nome, "\n")] = '\0'; // remover \n
+                nome[strcspn(nome, "\n")] = '\0';
                 adicionarAeroporto(grafo, codOrigem, nome);
                 break;
 
             case 2:
                 printf("Codigo da origem: ");
                 scanf("%3s", codOrigem);
+                getchar();
                 printf("Codigo do destino: ");
                 scanf("%3s", codDestino);
+                getchar();
                 printf("Numero do voo: ");
                 scanf("%d", &numero);
+                getchar();
                 adicionarVoo(grafo, codOrigem, codDestino, numero);
                 break;
 
             case 3:
-                printf("Codigo da origem: ");
-                scanf("%3s", codOrigem);
-                printf("Codigo do destino: ");
-                scanf("%3s", codDestino);
-                removerVoo(grafo, codOrigem, codDestino);
+                printf("Numero do voo: ");
+                scanf("%d", &numero);
+                getchar();
+                removerVoo(grafo, numero);
                 break;
 
             case 4:
                 printf("Codigo do aeroporto: ");
                 scanf("%3s", codOrigem);
+                getchar();
                 listarVoos(grafo, codOrigem);
                 break;
 
             case 5:
                 printf("Codigo da origem: ");
                 scanf("%3s", codOrigem);
+                getchar();
                 printf("Codigo do destino: ");
                 scanf("%3s", codDestino);
+                getchar();
                 buscarTrajetos(grafo, codOrigem, codDestino);
                 break;
 
